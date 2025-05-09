@@ -34,34 +34,48 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top'],
     ]);
+
+    $menuItems = [
+        ['label' => 'Inicio', 'url' => ['/site/index']],
+        ['label' => 'Acerca de Nosotros', 'url' => ['/site/about']],
+        ['label' => 'Contáctanos', 'url' => ['/site/contact']],
+        [
+            'label' => 'Gestionar Libro',
+            'items' => array_filter([
+                ['label' => 'Usuario', 'url' => ['/usuario/index']],
+                ['label' => 'Género', 'url' => ['/genero/index']],
+                ['label' => 'Libro', 'url' => ['/libro/index']],
+                ['label' => 'Autor', 'url' => ['/autor/index']],
+                ['label' => 'Préstamo', 'url' => ['/prestamo/index']],
+                !Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin'
+                    ? ['label' => 'Usuarios', 'url' => ['/user/index']]
+                    : null,
+            ]),
+        ],
+        Yii::$app->user->isGuest
+            ? ['label' => 'Iniciar Sesión', 'url' => ['/site/login']]
+            : ['label' => 'Cambiar Contraseña', 'url' => ['/user/change-password']],
+    ];
+
+    if (!Yii::$app->user->isGuest) {
+        $menuItems[] = '<li class="nav-item">'
+            . Html::beginForm(['/site/logout'], 'post', ['class' => 'd-inline'])
+            . Html::submitButton(
+                'Cerrar Sesión (' . Html::encode(Yii::$app->user->identity->apellido . ' ' . Yii::$app->user->identity->nombre) 
+                . ') ' . Html::encode(Yii::$app->user->identity->role),
+                ['class' => 'nav-link btn btn-link logout']
+            )
+            . Html::endForm()
+            . '</li>';
+    }
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'inicio', 'url' => ['/site/index']],
-            ['label' => 'Acerca de Nosotros', 'url' => ['/site/about']],
-            ['label' => 'Contactanos', 'url' => ['/site/contact']],
-     ['label'=> 'Gestionar Libro',
-            'items'=>[
-                ['label' => 'Usuario', 'url' => ['/usuario/index']],
-                 ['label' => 'Genero', 'url' => ['/genero/index']],
-                 ['label' => 'Libro', 'url' => ['libro/index']],
-                 ['label' => 'Autor', 'url' => ['/autor/index']],
-                 ['label' => 'Prestamo', 'url' => ['/prestamo/index']],
-            ],],
-            Yii::$app->user->isGuest
-                ? ['label' => 'Iniciar Session', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Cerrar Session (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
+        'items' => $menuItems,
     ]);
+
     NavBar::end();
     ?>
 </header>

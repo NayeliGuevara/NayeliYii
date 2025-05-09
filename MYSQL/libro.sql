@@ -128,6 +128,37 @@ INSERT INTO `prestamo` VALUES (1,1,2,'2025-04-21','2025-05-02'),(6,1,2,'2025-04-
 UNLOCK TABLES;
 
 --
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) DEFAULT NULL,
+  `nombre` varchar(150) DEFAULT NULL,
+  `apellido` varchar(150) DEFAULT NULL,
+  `password_hash` varchar(255) DEFAULT NULL,
+  `auth_key` varchar(45) DEFAULT NULL,
+  `access_token` varchar(45) DEFAULT NULL,
+  `role` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'NayeliGue','Nayeli','Guevara','$2y$13$WFXyF5K87c.D.iZGYdmoW.StnwhRiEp6egvj/SI3GN8fXQUJazW2e','Fi3MyjYpxOFnfaVdRABtKvgPPaUcNcPI','agsIVwwtvcvscZ_qKqiHTNkDP79DqmP5','admin'),(2,'NayeliGue1','Nayeli','Guevara','$2y$13$DrWgeMhVQgmqPqctmWYET.BMSAN.qCESDLL2YwGlADDHPPdNt/DSy','r9z0Dms-UaQFRPT6RVZbPVbjG4dLRUzV','h774fU-vYltITkBaAzoqH_H3OxLHjtaY','user');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usuario`
 --
 
@@ -161,4 +192,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-01 21:23:01
+-- Dump completed on 2025-05-08 20:32:32

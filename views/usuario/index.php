@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
 /** @var app\models\UsuarioSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -18,7 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Crear Usuario'), ['create'], ['class' => 'btn btn-custom']) ?>
+        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin'): ?>
+            <?= Html::a(Yii::t('app', 'Crear Usuario'), ['create'], ['class' => 'btn btn-custom']) ?>
+        <?php endif; ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -26,16 +29,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'tableOptions' => ['class' => 'table table-bordered table-striped text-center my-grid'], // Centramos texto
-        'headerRowOptions' => ['class' => 'table-header'], // Clase personalizada para el encabezado
+        'tableOptions' => ['class' => 'table table-bordered table-striped text-center my-grid'],
+        'headerRowOptions' => ['class' => 'table-header'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'nombre',
             'correo',
             [
                 'class' => ActionColumn::className(),
-                'template' => '{view} {update} {delete}', // Agregar acciones de vista, edición y eliminación
-                'contentOptions' => ['class' => 'action-buttons text-center'], // Centrado de las acciones
+                'template' => (!Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin') ? '{view} {update} {delete}' : '{view}',
+                'contentOptions' => ['class' => 'action-buttons text-center'],
                 'urlCreator' => function ($action, Usuario $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'idusuario' => $model->idusuario]);
                 }
@@ -61,7 +64,7 @@ $css = <<<CSS
 }
 
 .btn-custom:hover {
-    background-color: rgb(200, 120, 190); /* Un poco más oscuro al pasar el mouse */
+    background-color: rgb(200, 120, 190);
     color: white;
 }
 
@@ -76,7 +79,7 @@ $css = <<<CSS
 }
 
 .action-buttons a:hover {
-    background-color: rgb(200, 120, 190); /* Color al pasar el mouse */
+    background-color: rgb(200, 120, 190);
 }
 CSS;
 $this->registerCss($css);

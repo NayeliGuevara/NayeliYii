@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 /** @var yii\web\View $this */
 /** @var app\models\GeneroSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -18,7 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Crear Genero'), ['create'], ['class' => 'btn btn-custom']) ?>
+        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin'): ?>
+            <?= Html::a(Yii::t('app', 'Crear Genero'), ['create'], ['class' => 'btn btn-custom']) ?>
+        <?php endif; ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -33,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'nombre',
             [
                 'class' => ActionColumn::className(),
-                'template' => '{view} {update} {delete}',
+                'template' => (!Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin') ? '{view} {update} {delete}' : '{view}',
                 'contentOptions' => ['class' => 'action-buttons text-center'],
                 'urlCreator' => function ($action, Genero $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'idgenero' => $model->idgenero]);
