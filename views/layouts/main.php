@@ -41,7 +41,10 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         ['label' => 'Inicio', 'url' => ['/site/index']],
         ['label' => 'Acerca de Nosotros', 'url' => ['/site/about']],
         ['label' => 'Contáctanos', 'url' => ['/site/contact']],
-        [
+    ];
+
+    if (!Yii::$app->user->isGuest) {
+        $menuItems[] = [
             'label' => 'Gestionar Libro',
             'items' => array_filter([
                 ['label' => 'Usuario', 'url' => ['/usuario/index']],
@@ -49,30 +52,30 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                 ['label' => 'Libro', 'url' => ['/libro/index']],
                 ['label' => 'Autor', 'url' => ['/autor/index']],
                 ['label' => 'Préstamo', 'url' => ['/prestamo/index']],
-                !Yii::$app->user->isGuest && Yii::$app->user->identity->role === 'admin'
+                Yii::$app->user->identity->role === 'admin'
                     ? ['label' => 'Usuarios', 'url' => ['/user/index']]
                     : null,
             ]),
-        ],
-        Yii::$app->user->isGuest
-            ? ['label' => 'Iniciar Sesión', 'url' => ['/site/login']]
-            : ['label' => 'Cambiar Contraseña', 'url' => ['/user/change-password']],
-    ];
+        ];
+        $menuItems[] = ['label' => 'Cambiar Contraseña', 'url' => ['/user/change-password']];
 
-    if (!Yii::$app->user->isGuest) {
-        $menuItems[] = '<li class="nav-item">'
-            . Html::beginForm(['/site/logout'], 'post', ['class' => 'd-inline'])
-            . Html::submitButton(
-                'Cerrar Sesión (' . Html::encode(Yii::$app->user->identity->apellido . ' ' . Yii::$app->user->identity->nombre) 
-                . ') ' . Html::encode(Yii::$app->user->identity->role),
-                ['class' => 'nav-link btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
+        // Botón de cerrar sesión correctamente estilizado
+        $menuItems[] = [
+            'label' => 'Cerrar Sesión (' . Html::encode(Yii::$app->user->identity->apellido . ' ' . Yii::$app->user->identity->nombre) . ') ' . strtoupper(Html::encode(Yii::$app->user->identity->role)),
+            'url' => ['/site/logout'],
+            'linkOptions' => [
+                'data-method' => 'post',
+                'class' => 'nav-link logout',
+                'style' => 'color: #fff;',
+            ],
+            'encode' => false,
+        ];
+    } else {
+        $menuItems[] = ['label' => 'Iniciar Sesión', 'url' => ['/site/login']];
     }
 
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
+        'options' => ['class' => 'navbar-nav ms-auto'],
         'items' => $menuItems,
     ]);
 
@@ -81,7 +84,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 </header>
 
 <main id="main" class="flex-shrink-0" role="main">
-    <div class="container">
+    <div class="container" style="margin-top: 0px;">
         <?php if (!empty($this->params['breadcrumbs'])): ?>
             <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
         <?php endif ?>
