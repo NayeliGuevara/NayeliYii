@@ -25,6 +25,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <!-- Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column h-100">
 <?php $this->beginBody() ?>
@@ -32,36 +34,49 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <header id="header">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
+        // Quitamos brandLabel para no mostrar texto
+        //'brandLabel' => Yii::$app->name,
+        //'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top'],
+        // Para eliminar el link por defecto, dejamos 'brandUrl' en null o '#'
+        'brandUrl' => false,
+        'renderInnerContainer' => false, // Si quieres quitar el contenedor interno para mayor control
     ]);
+    ?>
 
+    <div class="logo">
+        <a href="<?= Yii::$app->homeUrl ?>">
+            <img src="<?= Yii::getAlias('@web/assets/images/logo.png') ?>" alt="Logo" style="height:40px;">
+        </a>
+    </div>
+
+    <?php
     $menuItems = [
-        ['label' => 'Inicio', 'url' => ['/site/index']],
-        ['label' => 'Acerca de Nosotros', 'url' => ['/site/about']],
-        ['label' => 'Contáctanos', 'url' => ['/site/contact']],
+        ['label' => '<i class="bi bi-house-door-fill"></i> Inicio', 'url' => ['/site/index'], 'encode' => false],
+        ['label' => '<i class="bi bi-info-circle-fill"></i> Acerca de Nosotros', 'url' => ['/site/about'], 'encode' => false],
+        ['label' => '<i class="bi bi-envelope-fill"></i> Contáctanos', 'url' => ['/site/contact'], 'encode' => false],
     ];
 
     if (!Yii::$app->user->isGuest) {
         $menuItems[] = [
-            'label' => 'Gestionar Libro',
+            'label' => '<i class="bi bi-book-half"></i> Gestionar Libro',
             'items' => array_filter([
-                ['label' => 'Usuario', 'url' => ['/usuario/index']],
-                ['label' => 'Género', 'url' => ['/genero/index']],
-                ['label' => 'Libro', 'url' => ['/libro/index']],
-                ['label' => 'Autor', 'url' => ['/autor/index']],
-                ['label' => 'Préstamo', 'url' => ['/prestamo/index']],
+                ['label' => '<i class="bi bi-person-fill"></i> Usuario', 'url' => ['/usuario/index'], 'encode' => false],
+                ['label' => '<i class="bi bi-tags-fill"></i> Género', 'url' => ['/genero/index'], 'encode' => false],
+                ['label' => '<i class="bi bi-journal-bookmark-fill"></i> Libro', 'url' => ['/libro/index'], 'encode' => false],
+                ['label' => '<i class="bi bi-pencil-fill"></i> Autor', 'url' => ['/autor/index'], 'encode' => false],
+                ['label' => '<i class="bi bi-box-arrow-in-right"></i> Préstamo', 'url' => ['/prestamo/index'], 'encode' => false],
                 Yii::$app->user->identity->role === 'admin'
-                    ? ['label' => 'Usuarios', 'url' => ['/user/index']]
+                    ? ['label' => '<i class="bi bi-people-fill"></i> Usuarios', 'url' => ['/user/index'], 'encode' => false]
                     : null,
             ]),
+            'encode' => false,
+            'submenuOptions' => ['class' => 'dropdown-menu dropdown-menu-end'],
         ];
-        $menuItems[] = ['label' => 'Cambiar Contraseña', 'url' => ['/user/change-password']];
+        $menuItems[] = ['label' => '<i class="bi bi-key-fill"></i> Cambiar Contraseña', 'url' => ['/user/change-password'], 'encode' => false];
 
-        // Botón de cerrar sesión correctamente estilizado
         $menuItems[] = [
-            'label' => 'Cerrar Sesión (' . Html::encode(Yii::$app->user->identity->apellido . ' ' . Yii::$app->user->identity->nombre) . ') ' . strtoupper(Html::encode(Yii::$app->user->identity->role)),
+            'label' => '<i class="bi bi-box-arrow-right"></i> Cerrar Sesión (' . Html::encode(Yii::$app->user->identity->apellido . ' ' . Yii::$app->user->identity->nombre) . ') ' . strtoupper(Html::encode(Yii::$app->user->identity->role)),
             'url' => ['/site/logout'],
             'linkOptions' => [
                 'data-method' => 'post',
@@ -71,7 +86,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             'encode' => false,
         ];
     } else {
-        $menuItems[] = ['label' => 'Iniciar Sesión', 'url' => ['/site/login']];
+        $menuItems[] = ['label' => '<i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión', 'url' => ['/site/login'], 'encode' => false];
     }
 
     echo Nav::widget([
